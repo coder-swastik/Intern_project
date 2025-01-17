@@ -22,7 +22,7 @@ def main():
 
         if file_type == 'csv':
             df = load_csv(upload_file)
-        elif file_type == 'xlsx':
+        elif file_type == 'xlsx': 
             df = load_excel(upload_file)
         else:
             st.error("Unsupported file format")
