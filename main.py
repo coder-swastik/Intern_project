@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
-from data_preprocessing import preprocess_data
-from display_data import display_data
+from src import preprocess_data, display_data
 
 
 def load_csv(file):
