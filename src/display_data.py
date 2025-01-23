@@ -1,14 +1,19 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import seaborn as sns
 import pandas as pd
 
 def display_data(df):
     st.dataframe(df.head())
     st.subheader('Summary')
-    st.write(df.describe())
 
-    category_col = df.columns[0]
-    value_col = df.columns[1]  
+
+    st.write(df.describe())
+    st.write(df.dtypes)
+
+    # here we identify the categorical and numerical column
+    categorical_cols = df.select_dtypes(include=['object', 'category']).columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
 
     data_type = st.selectbox("Select data type for visualization", ['Categorical', 'Numerical'])
 
@@ -23,10 +28,12 @@ def display_data(df):
                 st.write(f"Bar diagram for {column}")
                 plt.figure(figsize=(14, 6))
                 value_counts = df[column].value_counts()  
-                plt.bar(value_counts.index, value_counts.values, width=0.6)
+                plt.bar(value_counts.index, value_counts.values)
                 plt.title(f"Bar chart of {column}")
                 plt.xlabel(column)
                 plt.ylabel('Frequency')
+                plt.xticks(rotation=60, fontsize=10, ha="right") 
+                plt.tight_layout()
                 st.pyplot(plt)
 
             
@@ -50,30 +57,32 @@ def display_data(df):
                 st.pyplot(plt)
 
         else:  
+            numerical_col = numerical_cols[0]
             if plot_type == 'Bar':
-                st.write(f"Bar diagram for {column}")
+                st.write(f"Bar diagram for {column} vs {numerical_col}")
                 plt.figure(figsize=(14, 6))
-                plt.bar(df[category_col], df[value_col], width=0.6)
-                plt.title(f"Bar chart of {column}")
+                sns.barplot(x=column, y=numerical_col, data=df)
+                plt.title(f"Bar chart of {column} vs {numerical_col}")
                 plt.xlabel(column)
-                plt.ylabel('Frequency')
+                plt.ylabel(numerical_col)
                 st.pyplot(plt)
 
            
             if plot_type == 'Line':
-                st.write(f"Line diagram for {column}")
+                st.write(f"Line diagram for {column} vs {numerical_col}")
                 plt.figure(figsize=(10, 8))
-                plt.plot(df[category_col], df[value_col], marker='o', linestyle='dashed')
-                plt.title(f"Line chart of {column}")
+                sns.lineplot(x=column, y=numerical_col, data=df)
+                plt.title(f"Line chart of {column} vs {numerical_col}")
                 plt.xlabel(column)
-                plt.ylabel('Frequency')
+                plt.ylabel(numerical_col)
                 st.pyplot(plt)
 
             if plot_type == 'Pie':
-                st.write(f"Pie diagram for {column}")
+                st.write(f"Pie diagram for {column} vs {numerical_col}")
                 plt.figure(figsize=(10, 8))
-                plt.pie(df[value_col], labels=df[category_col], autopct='%1.1f%%')
-                plt.title(f"Pie chart of {column}")
+                df_grouped = df.groupby(column)[numerical_col].sum().reset_index()
+                plt.pie(df_grouped[numerical_col], labels=df_grouped[column], autopct='%1.1f%%')
+                plt.title(f"Pie chart of {column} vs {numerical_col}")
                 st.pyplot(plt)
 
     elif data_type == 'Numerical':
