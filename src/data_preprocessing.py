@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
+from sklearn.impute import KNNImputer
 
 # def preprocess_data(df):
 #     '''
@@ -38,48 +39,79 @@ from sklearn.impute import SimpleImputer
 #         '''
 
 
-# here we use linear regression for data preprocessing 
-def preprocess_data(df):
-    '''
-    Function to perform model-based imputation using linear regression for numerical columns.
-    It predicts missing values based on other features in the dataset.
-    '''
-    for column in df.columns:
-        if df[column].dtype in ['float64', 'int64']:
-            missing_data = df[df[column].isnull()]
-            
-            if not missing_data.empty:
-                
-                st.write(f"Processing missing values in column: {column}")
-                
-                # Drops rows where the target column is missing
-                df_non_missing = df.dropna(subset=[column])
-                
-                # Features
-                x = df_non_missing.drop(columns=[column])
-                y = df_non_missing[column]
 
-                # Handle missing values in features
-                imputer = SimpleImputer(strategy='mean')
-                x_imputed = imputer.fit_transform(x)
-                
-                # Train-test split
-                X_train, X_test, y_train, y_test = train_test_split(x_imputed, y, test_size=0.2, random_state=42)
+##Mean/Mode based imputations
+def preprocess_data(df,method ):
+    """
+    Fill missing valus with mean for numerical columns and mode for categorical column
+    """
 
-                # Create and fit the model
-                model = LinearRegression()
-                model.fit(X_train, y_train)
-
-                # Predict missing values in the original data
-                missing_data_x = missing_data.drop(columns=[column])
-                missing_data_x_imputed = imputer.transform(missing_data_x)
-                predicted_values = model.predict(missing_data_x_imputed)
-
-                # Fill the missing values in the original DataFrame
-                df.loc[missing_data.index, column] = predicted_values
-                st.write("The values being feed into the tables are:")
-                st.write(predicted_values)
+    if method == 'Fill missing values withy Mean/Mode':
+        st.write("Processing:filling missing values with mean/mode")
+        for column in df.columns:
+            if df[column].dtype in ['float64','int64']:
+                df[column] = df[column].fillna(df[column].mean())
             else:
-                st.write(f"No missing values in column: {column}")
+                df[column] = df[column].fillna(df[column].mode().iloc[0])
+
+
+
+#here we use linear regression for data preprocessing 
+    elif method == 'Linear Regression-Based Imputation':
+        '''
+        Function to perform model-based imputation using linear regression for numerical columns.
+        It predicts missing values based on other features in the dataset.
+    '''
+        for column in df.columns:
+            if df[column].dtype in ['float64', 'int64']:
+                missing_data = df[df[column].isnull()]
+            
+                if not missing_data.empty:
+                
+                    st.write(f"Processing missing values in column: {column}")
+                
+                    # Drops rows where the target column is missing
+                    df_non_missing = df.dropna(subset=[column])
+                
+                    # Features
+                    x = df_non_missing.drop(columns=[column])
+                    y = df_non_missing[column]
+
+                    # Handle missing values in features
+                    imputer = SimpleImputer(strategy='mean')
+                    x_imputed = imputer.fit_transform(x)
+                
+                    # Train-test split
+                    X_train, X_test, y_train, y_test = train_test_split(x_imputed, y, test_size=0.2, random_state=42)
+
+                    # Create and fit the model
+                    model = LinearRegression()
+                    model.fit(X_train, y_train)
+
+                    # Predict missing values in the original data
+                    missing_data_x = missing_data.drop(columns=[column])
+                    missing_data_x_imputed = imputer.transform(missing_data_x)
+                    predicted_values = model.predict(missing_data_x_imputed)
+
+                    # Fill the missing values in the original DataFrame
+                    df.loc[missing_data.index, column] = predicted_values
+                    st.write("The values being feed into the tables are:")
+                    st.write(predicted_values)
+                else:
+                    st.write(f"No missing values in column: {column}")
+
+
+    elif method == 'KNN-Based Imputations':
+        st.write("KNN-based Imputations")
+        imputer = KNNImputer(n_neighbors=5)
+        df = pd.DataFrame(imputer.fit_transform(df),columns=df.columns)
+
+
+    elif method == 'Drop Rows With Missing Data':
+        st.write("Dropping rows with missing data....")
+        df = df.dropna()
+    else:
+        st.error("Invalid Preprocessing method selected.")
+    
 
     return df

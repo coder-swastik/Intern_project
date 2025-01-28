@@ -4,10 +4,9 @@ import seaborn as sns
 import pandas as pd
 
 def display_data(df):
+    st.write("Diaplay function is being called")
     st.dataframe(df.head())
     st.subheader('Summary')
-
-
     st.write(df.describe())
     st.write(df.dtypes)
 
@@ -96,3 +95,8 @@ def display_data(df):
         plt.xlabel(column)
         plt.ylabel("Frequency")
         st.pyplot(plt)
+
+        if categorical_cols.empty and data_type == 'Categorical':
+            st.warning("No categorical columns available for visualization")
+        if numerical_col.empyt and data_type == 'Numerical':
+            st.warning("No numerical columnns available for visualization")

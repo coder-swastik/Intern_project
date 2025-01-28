@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from src import preprocess_data, display_data
 
-
 def load_csv(file):
     return pd.read_csv(file)
 
@@ -27,11 +26,29 @@ def main():
             st.error("Unsupported file format")
             st.stop()
 
-
+        st.write("File uplodaed successfully")
         #here the df is sent for preprocessing for any missing values
-        df = preprocess_data(df)
-    
+        st.write("Select a method to handle misssing data")
+        preprocess_method = st.selectbox('Choose a preprocessing method',
+                                         options =[
+                                             "Fill missing values withy Mean/Mode",
+                                             'Linear Regression-Based Imputation',
+                                             'KNN-Based Imputations',
+                                             "Drop Rows With Missing Data"
+                                         ])
+
+        # df = preprocess_data(df)
         #here the df is sent for display
-        display_data(df)
+        # display_data(df)
+
+        if st.button("Run Preprocessing"):
+            df= preprocess_data(df,preprocess_method)
+            st.success("Data preprocessing completed!")
+
+            st.write("Here is the preprocessed data:")
+            st.dataframe(df.head())
+
+            st.write("Visualizing the preprocessed Data:")
+            display_data(df)
 
 main()
