@@ -14,6 +14,7 @@ def display_data(df):
     categorical_cols = df.select_dtypes(include=['object', 'category']).columns
     numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
 
+
     data_type = st.selectbox("Select data type for visualization", ['Categorical', 'Numerical'])
 
     if data_type == 'Categorical':
@@ -96,7 +97,4 @@ def display_data(df):
         plt.ylabel("Frequency")
         st.pyplot(plt)
 
-        if categorical_cols.empty and data_type == 'Categorical':
-            st.warning("No categorical columns available for visualization")
-        if numerical_col.empyt and data_type == 'Numerical':
-            st.warning("No numerical columnns available for visualization")
+   

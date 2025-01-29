@@ -37,18 +37,19 @@ def main():
                                              "Drop Rows With Missing Data"
                                          ])
 
-        # df = preprocess_data(df)
+        df = preprocess_data(df,preprocess_method)
         #here the df is sent for display
-        # display_data(df)
+        display_data(df)
 
-        if st.button("Run Preprocessing"):
-            df= preprocess_data(df,preprocess_method)
-            st.success("Data preprocessing completed!")
+        # if st.button("Run Preprocessing"):
+        #     df= preprocess_data(df,preprocess_method)
+        #     st.success("Data preprocessing completed!")
+ 
+        #     st.write("Here is the preprocessed data:")
+        #     st.dataframe(df.head())
 
-            st.write("Here is the preprocessed data:")
-            st.dataframe(df.head())
-
-            st.write("Visualizing the preprocessed Data:")
-            display_data(df)
+        # if st.button("Display Visualization"):
+        #     st.write("Visualizing the preprocessed Data:")
+        #     display_data(df)
 
 main()
