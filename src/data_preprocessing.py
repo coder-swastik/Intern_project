@@ -57,6 +57,7 @@ def preprocess_data(df,method ):
 
 
 #here we use linear regression for data preprocessing 
+# to clear more concepts in this section still needed
     elif method == 'Linear Regression-Based Imputation':
         '''
         Function to perform model-based imputation using linear regression for numerical columns.
@@ -101,12 +102,13 @@ def preprocess_data(df,method ):
                     st.write(f"No missing values in column: {column}")
 
 
+## KNN-based imputations
     elif method == 'KNN-Based Imputations':
         st.write("KNN-based Imputations")
         imputer = KNNImputer(n_neighbors=5)
         df = pd.DataFrame(imputer.fit_transform(df),columns=df.columns)
 
-
+#droping the row based on the user option selection
     elif method == 'Drop Rows With Missing Data':
         st.write("Dropping rows with missing data....")
         df = df.dropna()
