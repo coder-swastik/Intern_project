@@ -34,7 +34,10 @@ def main():
                                              "Fill missing values withy Mean/Mode",
                                              'Linear Regression-Based Imputation',
                                              'KNN-Based Imputations',
-                                             "Drop Rows With Missing Data"
+                                             "Drop Rows With Missing Data",
+                                             'Forward Fill',
+                                             'Fill with unkown',
+                                             "Drops rows with missing data"
                                          ])
 
         df = preprocess_data(df,preprocess_method)

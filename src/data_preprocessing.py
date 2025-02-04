@@ -42,17 +42,17 @@ from sklearn.impute import KNNImputer
 
 ##Mean/Mode based imputations
 def preprocess_data(df,method ):
+
+    numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
+    categorical_cols = df.select_dtypes(include=['object','category']).columns
     """
     Fill missing valus with mean for numerical columns and mode for categorical column
     """
 
     if method == 'Fill missing values withy Mean/Mode':
         st.write("Processing:filling missing values with mean/mode")
-        for column in df.columns:
-            if df[column].dtype in ['float64','int64']:
+        for column in numerical_cols:
                 df[column] = df[column].fillna(df[column].mean())
-            else:
-                df[column] = df[column].fillna(df[column].mode().iloc[0])
 
 
 
@@ -63,13 +63,11 @@ def preprocess_data(df,method ):
         Function to perform model-based imputation using linear regression for numerical columns.
         It predicts missing values based on other features in the dataset.
     '''
-        for column in df.columns:
-            if df[column].dtype in ['float64', 'int64']:
-                missing_data = df[df[column].isnull()]
-            
-                if not missing_data.empty:
+        for column in numerical_cols:
+         missing_data = df[df[column].isnull()]
+         if not missing_data.empty:
                 
-                    st.write(f"Processing missing values in column: {column}")
+                    logs.append(f"Processing missing values in column: {column}")
                 
                     # Drops rows where the target column is missing
                     df_non_missing = df.dropna(subset=[column])
@@ -98,7 +96,7 @@ def preprocess_data(df,method ):
                     df.loc[missing_data.index, column] = predicted_values
                     st.write("The values being feed into the tables are:")
                     st.write(predicted_values)
-                else:
+        else:
                     st.write(f"No missing values in column: {column}")
 
 
@@ -106,14 +104,51 @@ def preprocess_data(df,method ):
     elif method == 'KNN-Based Imputations':
         st.write("KNN-based Imputations")
         imputer = KNNImputer(n_neighbors=5)
-        df = pd.DataFrame(imputer.fit_transform(df),columns=df.columns)
+        df[numerical_cols] = imputer.fit_transform(df[numerical_cols])
 
 #droping the row based on the user option selection
     elif method == 'Drop Rows With Missing Data':
         st.write("Dropping rows with missing data....")
         df = df.dropna()
+    
+
+    #Processing categorical data
+    elif method == "Mode Imputation":
+        st.write("Processing : Filling categorical missing value mode...")
+        for column in categorical_cols:
+            mode_value = df[column].mode()
+            if not mode_value.empty:
+                df[column]= df[column].fillna(mode_value.iloc[0]) ##confirming why this is being used...
+    
+    elif method == 'Forward Fill':
+        st.write("Processing filling categorical missing values")
+        df[categorical_cols]=df[categorical_cols].fillna(method='ffill')
+
+    elif method == 'Fill with unkown':
+        st.write("Processing: fillinf categorical missing value")
+        df[categorical_cols] =df[categorical_cols].fillna("Unkonw ")
+
+    elif method =="Drops rows with missing data":
+        st.write("Dropping rows with missing data....")
+        df = df.dropna()
     else:
         st.error("Invalid Preprocessing method selected.")
     
+    
+
+    ## Categorical data preprocessing
+    # fill with unknown
+
+    #drop Row
+
+    #fill with the most frequent values
+
+
+    #backward fill and forward fill
+
+
+    #if the data is complex using knn imputation
+
+
 
     return df

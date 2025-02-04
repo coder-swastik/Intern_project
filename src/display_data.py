@@ -8,7 +8,6 @@ def display_data(df):
     st.dataframe(df.head())
     st.subheader('Summary')
     st.write(df.describe())
-    st.write(df.dtypes)
 
     # here we identify the categorical and numerical column
     categorical_cols = df.select_dtypes(include=['object', 'category']).columns
