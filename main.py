@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from src import preprocess_data, display_data
+from src import rule_based_preprocess, display_data
 
 def load_csv(file):
     return pd.read_csv(file)
@@ -28,19 +28,19 @@ def main():
 
         st.write("File uplodaed successfully")
         #here the df is sent for preprocessing for any missing values
-        st.write("Select a method to handle misssing data")
-        preprocess_method = st.selectbox('Choose a preprocessing method',
-                                         options =[
-                                             "Fill missing values withy Mean/Mode",
-                                             'Linear Regression-Based Imputation',
-                                             'KNN-Based Imputations',
-                                             "Drop Rows With Missing Data",
-                                             'Forward Fill',
-                                             'Fill with unkown',
-                                             "Drops rows with missing data"
-                                         ])
+        # st.write("Select a method to handle misssing data")
+        # preprocess_method = st.selectbox('Choose a preprocessing method',
+        #                                  options =[
+        #                                      "Fill missing values withy Mean/Mode",
+        #                                      'Linear Regression-Based Imputation',
+        #                                      'KNN-Based Imputations',
+        #                                      "Drop Rows With Missing Data",
+        #                                      'Forward Fill',
+        #                                      'Fill with unkown',
+        #                                      "Drops rows with missing data"
+        #                                  ])
 
-        df = preprocess_data(df,preprocess_method)
+        df = rule_based_preprocess(df)
         #here the df is sent for display
         display_data(df)
 

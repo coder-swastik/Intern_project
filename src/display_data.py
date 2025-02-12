@@ -64,9 +64,11 @@ def display_data(df):
                 plt.title(f"Bar chart of {column} vs {numerical_col}")
                 plt.xlabel(column)
                 plt.ylabel(numerical_col)
+                plt.xticks(rotation=60, fontsize=10, ha="right") 
+                plt.tight_layout()
                 st.pyplot(plt)
 
-           
+             
             if plot_type == 'Line':
                 st.write(f"Line diagram for {column} vs {numerical_col}")
                 plt.figure(figsize=(10, 8))
