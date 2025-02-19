@@ -6,7 +6,7 @@ import pandas as pd
 def display_data(df):
     st.write("Diaplay function is being called")
     st.dataframe(df.head())
-    st.subheader('Summary')
+    st.subheader('Summary Statistics')
     st.write(df.describe())
 
     # here we identify the categorical and numerical column
@@ -16,10 +16,8 @@ def display_data(df):
 
     data_type = st.selectbox("Select data type for visualization", ['Categorical', 'Numerical'])
 
-    if data_type == 'Categorical':
-        categorical_columns = df.select_dtypes(include=['object']).columns
-        column = st.selectbox("Select the categorical column", categorical_columns)
-
+    if data_type == 'Categorical' and not categorical_cols.empty:
+        column = st.selectbox("Select the categorical column", categorical_cols)
         plot_type = st.selectbox("Select the plot type", ['Bar', 'Line', 'Pie'])
 
         if df[column].duplicated().any():  
@@ -51,8 +49,13 @@ def display_data(df):
                 st.write(f"Pie diagram for {column}")
                 plt.figure(figsize=(10, 8))
                 value_counts = df[column].value_counts()
-                plt.pie(value_counts.values, labels=value_counts.index)
+                plt.pie(value_counts.values, labels=value_counts.index,autopct='%1.1f%%',startangle=140)
                 plt.title(f"Pie chart of {column}")
+                st.write("### Insights:")
+                total_values = value_counts.sum()
+                top_value = value_counts.index[0]
+                top_percentage = (value_counts.values[0] / total_values) * 100
+                st.write(f"- The most frequent category is **{top_value}**, making up **{top_percentage:.2f}%** of the total.")
                 st.pyplot(plt)
 
         else:  
@@ -86,9 +89,8 @@ def display_data(df):
                 plt.title(f"Pie chart of {column} vs {numerical_col}")
                 st.pyplot(plt)
 
-    elif data_type == 'Numerical':
-        numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
-        column = st.selectbox("Select the numerical data column", numerical_columns)
+    elif data_type == 'Numerical' and not numerical_cols.empty:
+        column = st.selectbox("Select the numerical data column", numerical_cols)
 
         st.write(f"Displaying Histogram for {column}")
         plt.figure(figsize=(10, 8))
