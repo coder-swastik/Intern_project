@@ -1,8 +1,9 @@
 import streamlit as st
-from src.data_processing.knnimputation import KNNImputation
-from src.data_processing.linear_regression_imputation import LinearRegressionImputation
-from src.data_processing.modeImputation import ModeImputation
-from src.data_processing.impute_decorator import imputation_decorator
+
+from .knnimputation import KNNImputation
+from .linear_regression_imputation import LinearRegressionImputation
+from .modeImputation import ModeImputation
+from .impute_decorator import imputation_decorator
 
 @imputation_decorator(LinearRegressionImputation)
 def linear_regression_imputation(df, column):
