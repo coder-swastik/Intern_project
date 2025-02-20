@@ -4,10 +4,10 @@ This system is a data preprocessing and visualization tool built with Streamlit,
 
 ### How to run it on your own machine
 1. Clone the appliaction into your system
-   '''
+   ```
    $ git clone 
 
-   '''
+   ```
 2. Install the requirements
 
    ```
