@@ -22,9 +22,9 @@ def load_docx(file):
 
 def main():
     st.title("Data Preprocessing and Visualization")
-    st.write("Please upload a CSV or Excel or Docs file to analyze.")
+    st.write("Please upload a CSV | Excel | txt | Docs file to analyze.")
 
-    upload_file = st.file_uploader("Upload your CSV or xlsx or docx or txt file here", type=['csv', 'xlsx','docx','txt'])
+    upload_file = st.file_uploader("Upload your CSV , xlsx , docx or txt file here", type=['csv', 'xlsx','docx','txt'])
 
     if upload_file is not None:
         file_type = upload_file.name.split('.')[-1]
