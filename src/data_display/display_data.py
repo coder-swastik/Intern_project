@@ -4,7 +4,7 @@ import seaborn as sns
 import pandas as pd
 
 def display_data(df):
-    st.write("Diaplay function is being called")
+    st.write("Display function is being called")
     st.dataframe(df.head())
     st.subheader('Summary Statistics')
     st.write(df.describe())
@@ -14,11 +14,11 @@ def display_data(df):
     numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
 
 
-    data_type = st.selectbox("Select data type for visualization", ['Categorical', 'Numerical'])
+    data_type = st.selectbox("Select data type for visualization", ['Categorical', 'Numerical', 'Correlation Heatmap', 'Pair Plot'])
 
     if data_type == 'Categorical' and not categorical_cols.empty:
         column = st.selectbox("Select the categorical column", categorical_cols)
-        plot_type = st.selectbox("Select the plot type", ['Bar', 'Line', 'Pie'])
+        plot_type = st.selectbox("Select the plot type", ['Bar', 'Line', 'Pie','Count Plot'])
 
         if df[column].duplicated().any():  
             if plot_type == 'Bar':
@@ -57,6 +57,16 @@ def display_data(df):
                 top_percentage = (value_counts.values[0] / total_values) * 100
                 st.write(f"- The most frequent category is **{top_value}**, making up **{top_percentage:.2f}%** of the total.")
                 st.pyplot(plt)
+            
+            if plot_type == 'Count Plot':
+                st.write(f"Count plot for {column}")
+                plt.figure(figsize=(12,6))
+                sns.countplot(x=column,data=df)
+                plt.title(f"Count plot of {column}")
+                plt.xticks(rotation=60, fontsize=10, ha="right")
+                plt.tight_layout()
+                st.pyplot(plt)
+
 
         else:  
             numerical_col = numerical_cols[0]
@@ -89,15 +99,59 @@ def display_data(df):
                 plt.title(f"Pie chart of {column} vs {numerical_col}")
                 st.pyplot(plt)
 
+            if plot_type == 'Count Plot':
+                st.write(f"Count plot for {column}")
+                plt.figure(figsize=(12,6))
+                sns.countplot(x=column,data=df)
+                plt.title(f"Count plot of {column}")
+                plt.xticks(rotation=60, fontsize=10, ha="right")
+                plt.tight_layout()
+                st.pyplot(plt)
+
     elif data_type == 'Numerical' and not numerical_cols.empty:
         column = st.selectbox("Select the numerical data column", numerical_cols)
+        plot_type = st.selectbox("Select the plot type", ['Histogram', 'Box Plot', 'Line Plot'])
 
-        st.write(f"Displaying Histogram for {column}")
-        plt.figure(figsize=(10, 8))
-        plt.hist(df[column].dropna(), bins=20)
-        plt.title(f"Histogram of {column}")
-        plt.xlabel(column)
-        plt.ylabel("Frequency")
+        if plot_type =="Histogram":
+            st.write(f"Displaying Histogram for {column}")
+            plt.figure(figsize=(10, 8))
+            plt.hist(df[column].dropna(), bins=20)
+            plt.title(f"Histogram of {column}")
+            plt.xlabel(column)
+            plt.ylabel("Frequency")
+            st.pyplot(plt)
+
+        if plot_type == 'Box Plot':
+            st.write(f"Displaying Box Plot for {column}")
+            plt.figure(figsize=(10, 6))
+            sns.boxplot(y=df[column])
+            plt.title(f"Box plot of {column}")
+            st.pyplot(plt)
+
+        if plot_type == 'Line Plot':
+            st.write(f"Displaying Line Plot for {column}")
+            plt.figure(figsize=(12, 6))
+            plt.plot(df[column].dropna(), marker='o', linestyle='-')
+            plt.title(f"Line plot of {column}")
+            plt.xlabel('Index')
+            plt.ylabel(column)
+            st.pyplot(plt)
+
+    elif data_type == 'Correlation Heatmap':
+        st.write("Correlation Heatmap for Numerical Features")
+        corr = df[numerical_cols].corr()
+        plt.figure(figsize=(12, 8))
+        sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
+        plt.title("Correlation Heatmap")
         st.pyplot(plt)
+
+    elif data_type == 'Pair Plot':
+        st.write("Pair Plot for Numerical Features")
+        selected_cols = st.multiselect("Select numerical columns for pair plot (2 or more)", numerical_cols)
+        if len(selected_cols) >= 2:
+            sns.pairplot(df[selected_cols])
+            st.pyplot(plt)
+        else:
+            st.warning("Please select at least two numerical columns for the pair plot.")
 
    
